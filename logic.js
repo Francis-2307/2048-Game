@@ -393,16 +393,69 @@ function hasLost() {
 }
 
 function restartGame() {
-    board = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-    ];
-
+    // Iterate in the board and 
+    for(let r = 0; r < rows; r++){
+        for(let c = 0; c < columns; c++){
+            board[r][c] = 0;    // change all values to 0
+        }
+    }
     score = 0;
-    setTwo();
-    // setTwo();
+    setTwo()    // new tile
 }
 
+
+document.addEventListener('touchstart', (event)=>{
+	startX = event.touches[0].clientX;
+	startY = event.touches[0].clientY;
+})
+
+document.addEventListener('touchend', (event)=>
+{
+	if(!event.target.className.includes("tile"))
+	{
+		return;
+		// do nothing. tile not touched
+	}
+	let diffX = startX - event.changedTouches[0].clientX;
+	let diffY = startY - event.changedTouches[0].clientY;
+	if(Math.abs(diffX) > Math.abs(diffY)) 
+	{
+		if(diffX > 0){
+			slideLeft();
+			setTwo();
+		}
+		else{
+			slideRight();
+			setTwo();
+		}
+	}
+	else
+	{
+		if(diffY > 0){
+			slideUp();
+			setTwo();
+		}
+		else{
+			slideDown();
+			setTwo();
+		}
+	}
+
+	document.getElementById('score').innerText = score;
+	checkWin();
+	if(hasLost() == true)
+	{
+		alert("Game Over! You have lost the game. Game will restart");
+		restartGame();
+		alert("Click any arrow key to restart");
+	}
+});
+
+document.addEventListener('touchmove', (event)=>{
+	if(!event.target.className.includes("tile"))
+	{
+		return;
+	}
+	event.preventDefault();
+}, {passive: false}); 
 
